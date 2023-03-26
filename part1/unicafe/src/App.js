@@ -5,6 +5,10 @@ const Header = ({ text }) => <h1>{text}</h1>
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
 
 const Statistics = ({ good, neutral, bad }) => {
+  if(!good && !neutral && !bad) {
+    return <p>No feedback given</p>
+  }
+  
   const calculateAverage = () => {
     const numOfRatings = good + neutral + bad
     if (numOfRatings === 0) return 0
