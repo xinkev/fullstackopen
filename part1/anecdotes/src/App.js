@@ -6,9 +6,9 @@ const random = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min) // The maximum is exclusive and the minimum is inclusive
 }
 
-const Label = ({ text }) => <p>{text}</p>
+const Anecdote = ({ text, votes }) => <p>{text}<br />has {votes} votes</p>
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
-
+const Header = ({ text }) => <h1>{text}</h1>
 
 const App = () => {
   const anecdotes = [
@@ -35,12 +35,21 @@ const App = () => {
     setPoints(copy)
   }
 
+  const mostVotedAnecdote = () => {
+    const max = Math.max(...points)
+    const index = points.indexOf(max)
+    return [anecdotes[index], max]
+  }
+
   return (
     (<div>
-      <Label text={anecdotes[selected]} />
-      <Label text={`has ${points[selected]} votes`} />
+      <Header text="Anecdote of the day" />
+      <Anecdote text={anecdotes[selected]} votes={points[selected]} />
       <Button handleClick={onClickNext} text="next ancedote" />
       <Button handleClick={onClickVote} text="vote" />
+
+      <Header text="Anecdote with most vote" />
+      <Anecdote text={mostVotedAnecdote()[0]} votes={mostVotedAnecdote()[1]} />
     </div>)
   )
 }
