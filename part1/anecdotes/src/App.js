@@ -6,6 +6,8 @@ const random = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min) // The maximum is exclusive and the minimum is inclusive
 }
 
+const Label = ({ text }) => <p>{text}</p>
+const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
 
 
 const App = () => {
@@ -21,16 +23,25 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState([...Array(anecdotes.length).fill(0)])
 
-  const handleOnClick = () => {
+  const onClickNext = () => {
     setSelected(random(0, anecdotes.length))
   }
 
+  const onClickVote = () => {
+    const copy = [...points]
+    copy[selected]++
+    setPoints(copy)
+  }
+
   return (
-    <div>
-      <p>{anecdotes[selected]}</p>
-      <button onClick={handleOnClick}>next ancedote</button>
-    </div>
+    (<div>
+      <Label text={anecdotes[selected]} />
+      <Label text={`has ${points[selected]} votes`} />
+      <Button handleClick={onClickNext} text="next ancedote" />
+      <Button handleClick={onClickVote} text="vote" />
+    </div>)
   )
 }
 
