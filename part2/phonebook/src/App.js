@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState('')
+  const [name, setNewName] = useState('')
   const [number, setNumber] = useState('')
   const [filterKeyword, setFilterKeyword] = useState('')
 
@@ -20,10 +23,10 @@ const App = () => {
 
   const addPerson = (e) => {
     e.preventDefault()
-    if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    if (persons.find(person => person.name === name)) {
+      alert(`${name} is already added to phonebook`)
     } else {
-      const person = { name: newName, number: number, id: persons.length + 1 }
+      const person = { name: name, number: number, id: persons.length + 1 }
       setPersons(persons.concat(person))
       setNewName("")
       setNumber("")
@@ -34,26 +37,18 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with <input value={filterKeyword} onChange={handleFilterChange} />
-
-      <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={number} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter keyword={filterKeyword} onChange={handleFilterChange} />
+      <h2>Add a new</h2>
+      <PersonForm
+        name={name}
+        number={number}
+        onNameChange={handleNameChange}
+        onNumberChange={handleNumberChange}
+        onSubmit={addPerson} />
       <h2>Numbers</h2>
-      {persons
+      <Persons persons={persons
         .filter(person => person && person.name.includes(filterKeyword))
-        .map(person =>
-          <div key={person.id}>{person.name} {person.number}</div>
-        )}
+      } />
     </div>
   )
 }
