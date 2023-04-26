@@ -22,7 +22,7 @@ const App = () => {
 
   const filteredCountries = () => {
     return countries.filter((country) =>
-      country.name.common.toLowerCase().includes(query)
+      country.name.common.toLowerCase().includes(query.toLowerCase())
     )
   }
 
