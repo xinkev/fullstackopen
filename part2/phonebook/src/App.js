@@ -29,7 +29,7 @@ const App = () => {
   }
 
   const handleOnDeleteClick = (id) => {
-    personService.del(id).then((_) => {
+    personService.del(id).then(() => {
       setPersons(persons.filter((person) => person.id != id))
     })
   }
@@ -52,27 +52,31 @@ const App = () => {
 
   const updatePerson = (oldPerson) => {
     const person = { ...oldPerson, number: number }
-    personService.update(person).then((newPerson) => {
-      setPersons(
-        persons.map((person) =>
-          person.id !== newPerson.id ? person : newPerson
+    personService
+      .update(person)
+      .then((newPerson) => {
+        setPersons(
+          persons.map((person) =>
+            person.id !== newPerson.id ? person : newPerson
+          )
         )
-      )
-      setNewName("")
-      setNumber("")
-      setFilterKeyword("")
+        resetInputs()
 
-      showNotification(`${person.name}'s number is changed.`)
-    })
+        showNotification(`${person.name}'s number is changed.`, "success")
+      })
+      .catch(() => {
+        showNotification(
+          `Information of ${person.name} has already been removed from server`,
+          "error"
+        )
+      })
   }
 
   const addPerson = () => {
     const person = { name: name, number: number }
     personService.create(person).then((returnedPerson) => {
       setPersons(persons.concat(returnedPerson))
-      setNewName("")
-      setNumber("")
-      setFilterKeyword("")
+      resetInputs()
 
       showNotification(`Added ${person.name}`, "success")
     })
@@ -82,7 +86,13 @@ const App = () => {
     setNotification({ message, type })
     setTimeout(() => {
       setNotification(null)
-    }, 2000)
+    }, 6000)
+  }
+
+  const resetInputs = () => {
+    setNewName("")
+    setNumber("")
+    setFilterKeyword("")
   }
 
   return (
