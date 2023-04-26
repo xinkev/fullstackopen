@@ -33,19 +33,44 @@ const App = () => {
     })
   }
 
-  const addPerson = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    if (persons.find((person) => person.name === name)) {
-      alert(`${name} is already added to phonebook`)
+    
+    const foundPerson = persons.find((person) => person.name === name)
+    if (foundPerson) {
+      const shouldUpdate = window.confirm(
+        `${foundPerson.name} is already added to phonebook, replace the old number with a new one?`
+      )
+      if (shouldUpdate) {
+        updatePerson(foundPerson)
+      }
     } else {
-      const person = { name: name, number: number }
-      personService.create(person).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName("")
-        setNumber("")
-        setFilterKeyword("")
-      })
+      addPerson()
     }
+  }
+
+  const updatePerson = (oldPerson) => {
+    const person = { ...oldPerson, number: number }
+    personService.update(person).then((newPerson) => {
+      setPersons(
+        persons.map((person) =>
+          person.id !== newPerson.id ? person : newPerson
+        )
+      )
+      setNewName("")
+      setNumber("")
+      setFilterKeyword("")
+    })
+  }
+
+  const addPerson = () => {
+    const person = { name: name, number: number }
+    personService.create(person).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson))
+      setNewName("")
+      setNumber("")
+      setFilterKeyword("")
+    })
   }
 
   return (
@@ -58,7 +83,7 @@ const App = () => {
         number={number}
         onNameChange={handleNameChange}
         onNumberChange={handleNumberChange}
-        onSubmit={addPerson}
+        onSubmit={handleSubmit}
       />
       <h2>Numbers</h2>
       <Persons
