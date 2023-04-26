@@ -1,13 +1,21 @@
-import { useState } from 'react'
-import Filter from './components/Filter'
-import PersonForm from './components/PersonForm'
-import Persons from './components/Persons'
+import { useEffect, useState } from "react"
+import Filter from "./components/Filter"
+import PersonForm from "./components/PersonForm"
+import Persons from "./components/Persons"
+import axios from "axios"
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [name, setNewName] = useState('')
-  const [number, setNumber] = useState('')
-  const [filterKeyword, setFilterKeyword] = useState('')
+  const [name, setNewName] = useState("")
+  const [number, setNumber] = useState("")
+  const [filterKeyword, setFilterKeyword] = useState("")
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons").then((response) => {
+      const persons = response.data
+      setPersons(persons)
+    })
+  }, [])
 
   const handleNameChange = (e) => {
     setNewName(e.target.value)
@@ -23,7 +31,7 @@ const App = () => {
 
   const addPerson = (e) => {
     e.preventDefault()
-    if (persons.find(person => person.name === name)) {
+    if (persons.find((person) => person.name === name)) {
       alert(`${name} is already added to phonebook`)
     } else {
       const person = { name: name, number: number, id: persons.length + 1 }
@@ -44,11 +52,14 @@ const App = () => {
         number={number}
         onNameChange={handleNameChange}
         onNumberChange={handleNumberChange}
-        onSubmit={addPerson} />
+        onSubmit={addPerson}
+      />
       <h2>Numbers</h2>
-      <Persons persons={persons
-        .filter(person => person && person.name.includes(filterKeyword))
-      } />
+      <Persons
+        persons={persons.filter(
+          (person) => person && person.name.includes(filterKeyword)
+        )}
+      />
     </div>
   )
 }
