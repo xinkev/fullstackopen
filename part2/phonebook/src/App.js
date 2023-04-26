@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
-import axios from "axios"
+import Notification from "./components/Notification"
 import personService from "./services/persons"
 
 const App = () => {
@@ -10,6 +10,7 @@ const App = () => {
   const [name, setNewName] = useState("")
   const [number, setNumber] = useState("")
   const [filterKeyword, setFilterKeyword] = useState("")
+  const [notification, setNotification] = useState()
 
   useEffect(() => {
     personService.getAll().then((persons) => setPersons(persons))
@@ -35,7 +36,7 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     const foundPerson = persons.find((person) => person.name === name)
     if (foundPerson) {
       const shouldUpdate = window.confirm(
@@ -60,6 +61,8 @@ const App = () => {
       setNewName("")
       setNumber("")
       setFilterKeyword("")
+
+      showNotification(`${person.name}'s number is changed.`)
     })
   }
 
@@ -70,12 +73,22 @@ const App = () => {
       setNewName("")
       setNumber("")
       setFilterKeyword("")
+
+      showNotification(`Added ${person.name}`, "success")
     })
+  }
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type })
+    setTimeout(() => {
+      setNotification(null)
+    }, 2000)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
       <Filter keyword={filterKeyword} onChange={handleFilterChange} />
       <h2>Add a new</h2>
       <PersonForm
