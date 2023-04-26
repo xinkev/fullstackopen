@@ -30,7 +30,10 @@ const App = () => {
     <div className="App">
       <div>
         find countries <input value={query} onChange={handleQueryChange} />
-        <Countries countries={filteredCountries()} />
+        <Countries
+          countries={filteredCountries()}
+          onClickShow={setQuery}
+        />
       </div>
     </div>
   )
