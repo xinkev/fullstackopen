@@ -21,12 +21,10 @@ code {
   margin-bottom: 10px;
 }
 
-.notification,
-.error {
+.notification.error {
   color: red;
 }
 
-.notification,
-.success {
+.notification.success {
   color: green;
 }
