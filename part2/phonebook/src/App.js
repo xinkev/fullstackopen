@@ -27,6 +27,12 @@ const App = () => {
     setFilterKeyword(e.target.value)
   }
 
+  const handleOnDeleteClick = (id) => {
+    personService.del(id).then((_) => {
+      setPersons(persons.filter((person) => person.id != id))
+    })
+  }
+
   const addPerson = (e) => {
     e.preventDefault()
     if (persons.find((person) => person.name === name)) {
@@ -59,6 +65,7 @@ const App = () => {
         persons={persons.filter(
           (person) => person && person.name.includes(filterKeyword)
         )}
+        onDelete={handleOnDeleteClick}
       />
     </div>
   )
