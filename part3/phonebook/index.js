@@ -57,14 +57,29 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const person = request.body
-  console.log(person)
-  person.id = Math.floor(Math.random() * 1000)
   
+  var error = null
+  if (!person.name) {
+    error = "name is missing"
+  } 
+  if (!person.number) {
+    error = "number is missing"
+  }
+
+  if (persons.some(p => person.name === p.name)) {
+    error = "name must be unique"
+  }
+
+  if (error) {
+    return response.status(400).json({ error })
+  }
+
+  person.id = Math.floor(Math.random() * 1000)
+
   persons = persons.concat(person)
 
   response.json(persons)
 })
-
 
 const PORT = 3001
 app.listen(PORT, () => {
