@@ -1,7 +1,9 @@
 const express = require("express")
 const app = express()
+const morgan = require("morgan")
 
 app.use(express.json())
+app.use(morgan('tiny'))
 
 var persons = [
   {
@@ -57,16 +59,16 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const person = request.body
-  
+
   var error = null
   if (!person.name) {
     error = "name is missing"
-  } 
+  }
   if (!person.number) {
     error = "number is missing"
   }
 
-  if (persons.some(p => person.name === p.name)) {
+  if (persons.some((p) => person.name === p.name)) {
     error = "name must be unique"
   }
 
