@@ -2,6 +2,7 @@ const express = require("express")
 const app = express()
 const morgan = require("morgan")
 const cors = require("cors")
+const path = require("path")
 
 morgan.token("payload", function (req, res) {
   if (req.method == "POST") {
@@ -13,7 +14,7 @@ morgan.token("payload", function (req, res) {
 
 app.use(cors())
 app.use(express.json())
-app.use(express.static('build'))
+app.use(express.static(path.join(__dirname, "build")))
 app.use(
   morgan(
     ":method :url :status :res[content-length] - :response-time ms :payload"

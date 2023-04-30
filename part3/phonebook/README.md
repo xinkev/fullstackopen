@@ -1,1 +1,1 @@
-App URL: https://phonebook-tusf.onrender.com/info
+App URL: https://phonebook-tusf.onrender.com/
