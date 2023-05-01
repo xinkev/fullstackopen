@@ -68,19 +68,18 @@ app.post("/api/persons", (request, response) => {
     error = "number is missing"
   }
 
-  if (persons.some((p) => person.name === p.name)) {
-    error = "name must be unique"
-  }
+  // if (persons.some((p) => person.name === p.name)) {
+  //   error = "name must be unique"
+  // }
 
   if (error) {
     return response.status(400).json({ error })
   }
 
-  person.id = Math.floor(Math.random() * 1000)
-
-  persons = persons.concat(person)
-
-  response.json(persons)
+  const model = new Person({...person})
+  model.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 const PORT = process.env.PORT || 3001
