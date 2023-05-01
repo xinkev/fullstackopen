@@ -64,9 +64,9 @@ const App = () => {
 
         showNotification(`${person.name}'s number is changed.`, "success")
       })
-      .catch(() => {
+      .catch((error) => {
         showNotification(
-          `Information of ${person.name} has already been removed from server`,
+          error.response.data.error,
           "error"
         )
       })
