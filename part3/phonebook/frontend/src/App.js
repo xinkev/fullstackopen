@@ -74,12 +74,19 @@ const App = () => {
 
   const addPerson = () => {
     const person = { name: name, number: number }
-    personService.create(person).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson))
-      resetInputs()
+    personService
+      .create(person)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson))
+        resetInputs()
 
-      showNotification(`Added ${person.name}`, "success")
-    })
+        showNotification(`Added ${person.name}`, "success")
+      })
+      .catch((error) => {
+        const message = error.response.data.error
+        console.log(message)
+        setNotification({ message, type: "error" })
+      })
   }
 
   const showNotification = (message, type) => {
