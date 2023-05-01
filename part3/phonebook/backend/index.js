@@ -7,7 +7,7 @@ const path = require("path")
 const Person = require("./models/person")
 
 morgan.token("payload", function (req, res) {
-  if (req.method == "POST") {
+  if (req.method === "POST") {
     return JSON.stringify(req.body)
   } else {
     return null
