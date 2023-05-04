@@ -110,3 +110,27 @@ describe("favoriteBlog", () => {
     expect(listHelper.favoriteBlog(blogs)).toEqual(expected)
   })
 })
+
+describe("mostBlogs", () => {
+  test("of an empty list returns undefined", () => {
+    expect(listHelper.mostBlogs([])).toBe(undefined)
+  })
+
+  test("returns the author of the blog when it's the only blog available in a list", () => {
+    const expected = {
+      author: "Edsger W. Dijkstra",
+      blogs: 1,
+    }
+
+    expect(listHelper.mostBlogs(listWithOneBlog)).toEqual(expected)
+  })
+
+  test("of a bigger list returns the author with most blogs", () => {
+    const expected = {
+      author: "Robert C. Martin",
+      blogs: 3,
+    }
+
+    expect(listHelper.mostBlogs(blogs)).toEqual(expected)
+  })
+})

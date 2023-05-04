@@ -11,6 +11,7 @@
   "author": "xinkev",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^29.5.1",
     "eslint": "^8.39.0",
     "jest": "^29.5.0",
     "nodemon": "^2.0.22"
