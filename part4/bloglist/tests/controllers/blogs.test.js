@@ -35,7 +35,7 @@ test("blogs are returned as json", async () => {
     .expect("Content-Type", /application\/json/)
 }, 10000)
 
-test("all blgos are returned", async () => {
+test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs")
 
   expect(response.body).toHaveLength(initialBlogs.length)
@@ -46,6 +46,12 @@ test("a specific blog is within the returned blogs", async () => {
 
   const titles = response.body.map((r) => r.title)
   expect(titles).toContain("React patterns")
+})
+
+test("blog have a property called id", async () => {
+  const response = await api.get("/api/blogs")
+
+  expect(response.body[0].id).toBeDefined()
 })
 
 afterAll(async () => {
