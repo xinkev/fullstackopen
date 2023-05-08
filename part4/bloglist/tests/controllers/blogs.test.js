@@ -116,6 +116,25 @@ describe("deletion", () => {
   })
 })
 
+describe("updating a blog", () => {
+  test("succeeds with 200 provided a valid blog object and a valid id", async () => {
+    const blogToUpdate = (await helper.blogsInDb())[0]
+    const newBlog = { ...blogToUpdate, title: "New title" }
+
+    const response = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(newBlog)
+      .expect(200)
+      .expect("Content-Type", /application\/json/)
+
+    const updatedBlog = response.body
+    expect(updatedBlog.title).toBe(newBlog.title)
+
+    const titles = (await helper.blogsInDb()).map((b) => b.title)
+    expect(titles).toContain(newBlog.title)
+  })
+})
+
 afterAll(async () => {
   await moongose.connection.close()
 })
