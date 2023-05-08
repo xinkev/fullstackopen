@@ -60,6 +60,25 @@ test("a valid blog can be added", async () => {
   expect(titles).toContain(newBlog.title)
 })
 
+test("when likes is missing, it will be default to zero", async () => {
+  const newBlog = {
+    title: "Go To Statement Considered Harmful",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+  }
+
+  const response = await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/)
+
+  const createdBlog = response.body
+  delete createdBlog.id
+
+  expect(createdBlog).toEqual({ ...newBlog, likes: 0 })
+})
+
 afterAll(async () => {
   await moongose.connection.close()
 })
