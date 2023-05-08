@@ -79,6 +79,24 @@ test("when likes is missing, it will be default to zero", async () => {
   expect(createdBlog).toEqual({ ...newBlog, likes: 0 })
 })
 
+test("fails with 400 if title is missing", async () => {
+  const newBlog = {
+    author: "John Smith",
+    url: "https://example.com",
+  }
+
+  await api.post("/api/blogs").send(newBlog).expect(400)
+})
+
+test("fails with 400 if url is missing", async () => {
+  const newBlog = {
+    title: "A test",
+    author: "John Smith",
+  }
+
+  await api.post("/api/blogs").send(newBlog).expect(400)
+})
+
 afterAll(async () => {
   await moongose.connection.close()
 })
