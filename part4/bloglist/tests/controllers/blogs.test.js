@@ -13,88 +13,92 @@ beforeEach(async () => {
   }
 })
 
-test("blogs are returned as json", async () => {
-  await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/)
-}, 10000)
+describe("when already have some blogs", () => {
+  test("blogs are returned as json", async () => {
+    await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/)
+  })
 
-test("all blogs are returned", async () => {
-  const response = await api.get("/api/blogs")
+  test("all blogs are returned", async () => {
+    const response = await api.get("/api/blogs")
 
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test("a specific blog is within the returned blogs", async () => {
+    const response = await api.get("/api/blogs")
+
+    const titles = response.body.map((r) => r.title)
+    expect(titles).toContain("React patterns")
+  })
+
+  test("blog have a property called id", async () => {
+    const response = await api.get("/api/blogs")
+
+    expect(response.body[0].id).toBeDefined()
+  })
 })
 
-test("a specific blog is within the returned blogs", async () => {
-  const response = await api.get("/api/blogs")
+describe("addition of a new blog", () => {
+  test("a valid blog can be added", async () => {
+    const newBlog = {
+      title: "Go To Statement Considered Harmful",
+      author: "Edsger W. Dijkstra",
+      url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+      likes: 5,
+    }
 
-  const titles = response.body.map((r) => r.title)
-  expect(titles).toContain("React patterns")
-})
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/)
 
-test("blog have a property called id", async () => {
-  const response = await api.get("/api/blogs")
+    const latestBlogs = await helper.blogsInDb()
+    expect(latestBlogs).toHaveLength(helper.initialBlogs.length + 1)
 
-  expect(response.body[0].id).toBeDefined()
-})
+    const titles = latestBlogs.map((blog) => blog.title)
+    expect(titles).toContain(newBlog.title)
+  })
 
-test("a valid blog can be added", async () => {
-  const newBlog = {
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    likes: 5,
-  }
+  test("when likes is missing, it will be default to zero", async () => {
+    const newBlog = {
+      title: "Go To Statement Considered Harmful",
+      author: "Edsger W. Dijkstra",
+      url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    }
 
-  await api
-    .post("/api/blogs")
-    .send(newBlog)
-    .expect(201)
-    .expect("Content-Type", /application\/json/)
+    const response = await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/)
 
-  const latestBlogs = await helper.blogsInDb()
-  expect(latestBlogs).toHaveLength(helper.initialBlogs.length + 1)
+    const createdBlog = response.body
+    delete createdBlog.id
 
-  const titles = latestBlogs.map((blog) => blog.title)
-  expect(titles).toContain(newBlog.title)
-})
+    expect(createdBlog).toEqual({ ...newBlog, likes: 0 })
+  })
 
-test("when likes is missing, it will be default to zero", async () => {
-  const newBlog = {
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-  }
+  test("fails with 400 if title is missing", async () => {
+    const newBlog = {
+      author: "John Smith",
+      url: "https://example.com",
+    }
 
-  const response = await api
-    .post("/api/blogs")
-    .send(newBlog)
-    .expect(201)
-    .expect("Content-Type", /application\/json/)
+    await api.post("/api/blogs").send(newBlog).expect(400)
+  })
 
-  const createdBlog = response.body
-  delete createdBlog.id
+  test("fails with 400 if url is missing", async () => {
+    const newBlog = {
+      title: "A test",
+      author: "John Smith",
+    }
 
-  expect(createdBlog).toEqual({ ...newBlog, likes: 0 })
-})
-
-test("fails with 400 if title is missing", async () => {
-  const newBlog = {
-    author: "John Smith",
-    url: "https://example.com",
-  }
-
-  await api.post("/api/blogs").send(newBlog).expect(400)
-})
-
-test("fails with 400 if url is missing", async () => {
-  const newBlog = {
-    title: "A test",
-    author: "John Smith",
-  }
-
-  await api.post("/api/blogs").send(newBlog).expect(400)
+    await api.post("/api/blogs").send(newBlog).expect(400)
+  })
 })
 
 afterAll(async () => {

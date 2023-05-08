@@ -96,7 +96,6 @@ describe("favoriteBlog", () => {
     }
 
     const result = listHelper.favoriteBlog(listWithOneBlog)
-    console.log(JSON.stringify(result))
     expect(result).toEqual(expected)
   })
 
