@@ -101,6 +101,21 @@ describe("addition of a new blog", () => {
   })
 })
 
+describe("deletion", () => {
+  test("succeeds with 200 if the id is valid", async () => {
+    const blogs = await helper.blogsInDb()
+    const blogToDelete = blogs[0]
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+    const blogsAfterDeletion = await helper.blogsInDb()
+    expect(blogsAfterDeletion).toHaveLength(blogs.length - 1)
+
+    const titles = blogsAfterDeletion.map((b) => b.title)
+    expect(titles).not.toContain(blogToDelete.title)
+  })
+})
+
 afterAll(async () => {
   await moongose.connection.close()
 })
