@@ -1,8 +1,6 @@
 const blogRouter = require("express").Router()
 const Blog = require("../models/blog")
 const User = require("../models/user")
-const jwt = require("jsonwebtoken")
-const { TOKEN_SECRET } = require("../utils/config")
 
 blogRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", {
@@ -41,7 +39,7 @@ blogRouter.delete("/:id", async (request, response) => {
       .status(401)
       .json({ error: "you do not have permission to delete this blog" })
   }
-
+  await Blog.findByIdAndRemove(blogId)
   response.status(204).end()
 })
 
