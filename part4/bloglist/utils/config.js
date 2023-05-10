@@ -6,7 +6,10 @@ const MONGODB_URI =
     ? process.env.TEST_MONGODB_URI
     : process.env.MONGODB_URI
 
+const TOKEN_SECRET = process.env.SECRET
+
 module.exports = {
   PORT,
   MONGODB_URI,
+  TOKEN_SECRET
 }
