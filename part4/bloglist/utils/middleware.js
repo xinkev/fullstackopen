@@ -14,10 +14,12 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
-
-  if (error.name === "CastError") {
+  const errorName = error.name
+  if (errorName === "CastError") {
     return response.status(400).send({ error: "malformatted id" })
-  } else if (error.name === "ValidationError") {
+  } else if (errorName === "ValidationError") {
+    return response.status(400).json({ error: error.message })
+  } else if (errorName === "JsonWebTokenError") {
     return response.status(400).json({ error: error.message })
   }
 
@@ -27,5 +29,5 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
 }
