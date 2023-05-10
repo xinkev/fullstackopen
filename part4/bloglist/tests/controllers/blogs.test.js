@@ -1,14 +1,32 @@
 const moongose = require("mongoose")
-const supertest = require("supertest")
+const supertest = require("supertest").agent
 const app = require("../../app")
 const Blog = require("../../models/blog")
 const api = supertest(app)
 const helper = require("./test_helper")
+const User = require("../../models/user")
+
+beforeAll(async () => {
+  await User.deleteMany({})
+
+  const user = { username: "user", password: "password", name: "Test User" }
+  await api.post("/api/users").send(user)
+
+  const result = await api.post("/api/login").send(user)
+  api.auth(result.body.token, { type: "bearer" })
+})
+
+afterAll(async () => {
+  await User.deleteMany({})
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
+
+  const users = await helper.usersInDb()
+
   for (let blog of helper.initialBlogs) {
-    let blogObject = new Blog(blog)
+    let blogObject = new Blog({ ...blog, user: users[0].id })
     await blogObject.save()
   }
 })
@@ -78,8 +96,8 @@ describe("addition of a new blog", () => {
 
     const createdBlog = response.body
     delete createdBlog.id
-
-    expect(createdBlog).toEqual({ ...newBlog, likes: 0 })
+    const users = await helper.usersInDb()
+    expect(createdBlog).toEqual({ ...newBlog, likes: 0, user: users[0].id })
   })
 
   test("fails with 400 if title is missing", async () => {
