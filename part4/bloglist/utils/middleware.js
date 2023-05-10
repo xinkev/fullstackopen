@@ -42,6 +42,9 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = (request, response, next) => {
+  if (!request.token) {
+    return response.status(401).json({ error: "invalid token" })
+  }
   const user = jwt.verify(request.token, TOKEN_SECRET)
   if (!user.id) {
     return response.status(401).json({ error: "invalid token" })

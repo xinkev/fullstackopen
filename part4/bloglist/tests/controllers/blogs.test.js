@@ -117,6 +117,20 @@ describe("addition of a new blog", () => {
 
     await api.post("/api/blogs").send(newBlog).expect(400)
   })
+
+  test("fails with 401 if bearer token is not provided", async () => {
+    const newBlog = {
+      title: "A test",
+      author: "John Smith",
+      url: "http://example.com",
+    }
+
+    await api
+      .post("/api/blogs")
+      .set({ Authorization: null })
+      .send(newBlog)
+      .expect(401)
+  })
 })
 
 describe("deletion", () => {
