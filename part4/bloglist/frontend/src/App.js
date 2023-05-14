@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import Blog from "./components/Blog"
+import Notification from "./components/Notification"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
 
@@ -10,6 +11,7 @@ const App = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [blog, setBlog] = useState(null)
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     if (user) {
@@ -30,8 +32,19 @@ const App = () => {
       window.localStorage.setItem(LOCAL_KEY_USER, JSON.stringify(user))
       setUser(user)
     } catch (exception) {
-      console.log("failed to login", exception)
+      showNotification({
+        message: "wrong username or password",
+        type: "error",
+      })
     }
+  }
+
+  const showNotification = (notification) => {
+    console.log(JSON.stringify(notification))
+    setNotification(notification)
+    setTimeout(() => {
+      setNotification(null)
+    }, 3000)
   }
 
   const onLogoutClick = (e) => {
@@ -44,8 +57,16 @@ const App = () => {
     try {
       const createdBlog = await blogService.create(blog)
       setBlogs(blogs.concat(createdBlog))
+      setBlog(null)
+      showNotification({
+        message: `a new blog ${blog.title} by ${blog.author}`,
+        type: "success",
+      })
     } catch (exception) {
-      console.log("Failed to create blog", exception)
+      showNotification({
+        message: "failed to create the blog",
+        type: "error",
+      })
     }
   }
 
@@ -53,6 +74,7 @@ const App = () => {
     return (
       <div>
         <h2>log in to application</h2>
+        <Notification notification={notification} />
         <form onSubmit={onLoginSubmit}>
           <div>
             username
@@ -82,6 +104,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
+        <Notification notification={notification} />
         <p>
           {user.name} logged in <button onClick={onLogoutClick}>logout</button>
         </p>
@@ -92,6 +115,7 @@ const App = () => {
             <div>
               title:
               <input
+                value={blog ? blog.title : ""}
                 type="text"
                 name="Title"
                 onChange={({ target }) =>
@@ -102,6 +126,7 @@ const App = () => {
             <div>
               author:
               <input
+                value={blog ? blog.author : ""}
                 type="text"
                 name="Author"
                 onChange={({ target }) =>
@@ -114,6 +139,7 @@ const App = () => {
               <input
                 type="text"
                 name="url"
+                value={blog ? blog.url : ""}
                 onChange={({ target }) =>
                   setBlog({ ...blog, url: target.value })
                 }
