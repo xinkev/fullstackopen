@@ -6,9 +6,10 @@ import loginService from "./services/login"
 const App = () => {
   const LOCAL_KEY_USER = "loggedin_user"
   const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState()
+  const [user, setUser] = useState(null)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [blog, setBlog] = useState(null)
 
   useEffect(() => {
     if (user) {
@@ -38,25 +39,23 @@ const App = () => {
     setUser(null)
   }
 
-  if (user) {
-    return (
-      <div>
-        <h2>blogs</h2>
-        <div>
-          {user.name} logged in <button onClick={onLogoutClick}>logout</button>
-        </div>
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
-      </div>
-    )
-  } else {
+  const onCreateBlog = async (e) => {
+    e.preventDefault()
+    try {
+      const createdBlog = await blogService.create(blog)
+      setBlogs(blogs.concat(createdBlog))
+    } catch (exception) {
+      console.log("Failed to create blog", exception)
+    }
+  }
+
+  const loginForm = () => {
     return (
       <div>
         <h2>log in to application</h2>
         <form onSubmit={onLoginSubmit}>
           <div>
-            username{" "}
+            username
             <input
               value={username}
               name="Username"
@@ -65,7 +64,7 @@ const App = () => {
             />
           </div>
           <div>
-            password{" "}
+            password
             <input
               value={password}
               name="Password"
@@ -78,6 +77,59 @@ const App = () => {
       </div>
     )
   }
+
+  const blogsLayout = () => {
+    return (
+      <div>
+        <h2>blogs</h2>
+        <p>
+          {user.name} logged in <button onClick={onLogoutClick}>logout</button>
+        </p>
+        <br />
+        <div>
+          create new
+          <form onSubmit={onCreateBlog}>
+            <div>
+              title:
+              <input
+                type="text"
+                name="Title"
+                onChange={({ target }) =>
+                  setBlog({ ...blog, title: target.value })
+                }
+              />
+            </div>
+            <div>
+              author:
+              <input
+                type="text"
+                name="Author"
+                onChange={({ target }) =>
+                  setBlog({ ...blog, author: target.value })
+                }
+              />
+            </div>
+            <div>
+              url:
+              <input
+                type="text"
+                name="url"
+                onChange={({ target }) =>
+                  setBlog({ ...blog, url: target.value })
+                }
+              />
+            </div>
+            <button type="submit">create</button>
+          </form>
+        </div>
+        {blogs.map((blog) => (
+          <Blog key={blog.id} blog={blog} />
+        ))}
+      </div>
+    )
+  }
+
+  return user ? blogsLayout() : loginForm()
 }
 
 export default App
