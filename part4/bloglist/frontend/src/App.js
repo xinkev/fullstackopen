@@ -3,6 +3,7 @@ import Blog from "./components/Blog"
 import Notification from "./components/Notification"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
+import Toggleable from "./components/Toggleable"
 
 const App = () => {
   const LOCAL_KEY_USER = "loggedin_user"
@@ -12,6 +13,7 @@ const App = () => {
   const [password, setPassword] = useState("")
   const [blog, setBlog] = useState(null)
   const [notification, setNotification] = useState(null)
+  const [blogFormVisible, setBlogFormVisible] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -109,7 +111,7 @@ const App = () => {
           {user.name} logged in <button onClick={onLogoutClick}>logout</button>
         </p>
         <br />
-        <div>
+        <Toggleable buttonLabel="new blog">
           create new
           <form onSubmit={onCreateBlog}>
             <div>
@@ -147,7 +149,7 @@ const App = () => {
             </div>
             <button type="submit">create</button>
           </form>
-        </div>
+        </Toggleable>
         {blogs.map((blog) => (
           <Blog key={blog.id} blog={blog} />
         ))}
