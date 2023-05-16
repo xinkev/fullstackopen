@@ -97,13 +97,15 @@ const App = () => {
           <Toggleable buttonLabel="new blog" ref={toggleRef}>
             <BlogForm onCreateBlog={handleBlogCreation} ref={blogFormRef} />
           </Toggleable>
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              onClickLike={() => handleLikeClick(blog)}
-            />
-          ))}
+          {blogs
+            .sort((a, b) => a.likes < b.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                onClickLike={() => handleLikeClick(blog)}
+              />
+            ))}
         </>
       )}
       {!user && (
