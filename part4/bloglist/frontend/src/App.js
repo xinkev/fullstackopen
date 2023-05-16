@@ -70,6 +70,19 @@ const App = () => {
     }
   }
 
+  const handleLikeClick = async (blog) => {
+    const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
+    try {
+      const updatedBlog = await blogService.update(newBlog)
+      setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)))
+    } catch (exception) {
+      showNotification({
+        message: "failed to create the blog",
+        type: "error",
+      })
+    }
+  }
+
   return (
     <div>
       {user && (
@@ -85,7 +98,11 @@ const App = () => {
             <BlogForm onCreateBlog={handleBlogCreation} ref={blogFormRef} />
           </Toggleable>
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              onClickLike={() => handleLikeClick(blog)}
+            />
           ))}
         </>
       )}
