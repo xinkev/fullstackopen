@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Blog from "./components/Blog"
 import Notification from "./components/Notification"
+import LoginForm from "./components/LoginForm"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
 import Toggleable from "./components/Toggleable"
+import BlogForm from "./components/BlogForm"
 
 const App = () => {
   const LOCAL_KEY_USER = "loggedin_user"
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [blog, setBlog] = useState(null)
   const [notification, setNotification] = useState(null)
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
+  const blogFormRef = useRef()
+  const toggleRef = useRef()
 
   useEffect(() => {
     if (user) {
@@ -27,10 +27,9 @@ const App = () => {
     setUser(JSON.parse(userString))
   }, [])
 
-  const onLoginSubmit = async (e) => {
-    e.preventDefault()
+  const onLoginSubmit = async (credentials) => {
     try {
-      const user = await loginService.login({ username, password })
+      const user = await loginService.login(credentials)
       window.localStorage.setItem(LOCAL_KEY_USER, JSON.stringify(user))
       setUser(user)
     } catch (exception) {
@@ -42,7 +41,6 @@ const App = () => {
   }
 
   const showNotification = (notification) => {
-    console.log(JSON.stringify(notification))
     setNotification(notification)
     setTimeout(() => {
       setNotification(null)
@@ -54,16 +52,16 @@ const App = () => {
     setUser(null)
   }
 
-  const onCreateBlog = async (e) => {
-    e.preventDefault()
+  const handleBlogCreation = async (newBlog) => {
     try {
-      const createdBlog = await blogService.create(blog)
+      const createdBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(createdBlog))
-      setBlog(null)
       showNotification({
-        message: `a new blog ${blog.title} by ${blog.author}`,
+        message: `a new blog ${createdBlog.title} by ${createdBlog.author}`,
         type: "success",
       })
+      blogFormRef.current.reset()
+      toggleRef.current.toggleVisibility()
     } catch (exception) {
       showNotification({
         message: "failed to create the blog",
@@ -72,92 +70,30 @@ const App = () => {
     }
   }
 
-  const loginForm = () => {
-    return (
-      <div>
-        <h2>log in to application</h2>
-        <Notification notification={notification} />
-        <form onSubmit={onLoginSubmit}>
-          <div>
-            username
-            <input
-              value={username}
-              name="Username"
-              type="text"
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-              type="password"
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
-    )
-  }
-
-  const blogsLayout = () => {
-    return (
-      <div>
-        <h2>blogs</h2>
-        <Notification notification={notification} />
-        <p>
-          {user.name} logged in <button onClick={onLogoutClick}>logout</button>
-        </p>
-        <br />
-        <Toggleable buttonLabel="new blog">
-          create new
-          <form onSubmit={onCreateBlog}>
-            <div>
-              title:
-              <input
-                value={blog ? blog.title : ""}
-                type="text"
-                name="Title"
-                onChange={({ target }) =>
-                  setBlog({ ...blog, title: target.value })
-                }
-              />
-            </div>
-            <div>
-              author:
-              <input
-                value={blog ? blog.author : ""}
-                type="text"
-                name="Author"
-                onChange={({ target }) =>
-                  setBlog({ ...blog, author: target.value })
-                }
-              />
-            </div>
-            <div>
-              url:
-              <input
-                type="text"
-                name="url"
-                value={blog ? blog.url : ""}
-                onChange={({ target }) =>
-                  setBlog({ ...blog, url: target.value })
-                }
-              />
-            </div>
-            <button type="submit">create</button>
-          </form>
-        </Toggleable>
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
-      </div>
-    )
-  }
-
-  return user ? blogsLayout() : loginForm()
+  return (
+    <div>
+      {user && (
+        <>
+          <h2>blogs</h2>
+          <Notification notification={notification} />
+          <p>
+            {user.name} logged in{" "}
+            <button onClick={onLogoutClick}>logout</button>
+          </p>
+          <br />
+          <Toggleable buttonLabel="new blog" ref={toggleRef}>
+            <BlogForm onCreateBlog={handleBlogCreation} ref={blogFormRef} />
+          </Toggleable>
+          {blogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} />
+          ))}
+        </>
+      )}
+      {!user && (
+        <LoginForm onLoginSubmit={onLoginSubmit} notification={notification} />
+      )}
+    </div>
+  )
 }
 
 export default App
