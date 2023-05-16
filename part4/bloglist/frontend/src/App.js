@@ -77,7 +77,21 @@ const App = () => {
       setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)))
     } catch (exception) {
       showNotification({
-        message: "failed to create the blog",
+        message: "failed to remove the blog",
+        type: "error",
+      })
+    }
+  }
+
+  const handleRemoveClick = async (blog) => {
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
+    
+    try {
+      await blogService.remove(blog)
+      setBlogs(blogs.filter((b) => b.id !== blog.id))
+    } catch (exception) {
+      showNotification({
+        message: "failed to remove the blog",
         type: "error",
       })
     }
@@ -104,6 +118,7 @@ const App = () => {
                 key={blog.id}
                 blog={blog}
                 onClickLike={() => handleLikeClick(blog)}
+                onClickDelete={() => handleRemoveClick(blog)}
               />
             ))}
         </>
