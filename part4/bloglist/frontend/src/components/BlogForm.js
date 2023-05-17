@@ -34,12 +34,14 @@ const BlogForm = forwardRef(({ onCreateBlog }, refs) => {
             type="text"
             name="Title"
             onChange={({ target }) => setTitle(target.value)}
+            id="title-input"
           />
         </div>
         <div>
           author:
           <input
             value={author}
+            id="author-input"
             type="text"
             name="Author"
             onChange={({ target }) => setAuthor(target.value)}
@@ -49,6 +51,7 @@ const BlogForm = forwardRef(({ onCreateBlog }, refs) => {
           url:
           <input
             type="text"
+            id="url-input"
             name="url"
             value={url}
             onChange={({ target }) => setUrl(target.value)}
