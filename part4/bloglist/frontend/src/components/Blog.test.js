@@ -10,12 +10,12 @@ describe("<Blog/>", () => {
     author: "Tester",
     url: "http://example.com",
   }
-  let container
+  let renderResult
 
   beforeEach(() => {
-    container = render(
+    renderResult = render(
       <Blog blog={blog} onClickDelete={() => {}} onClickLike={() => {}} />
-    ).container
+    )
   })
 
   test("renders title and author by default", () => {
@@ -24,7 +24,7 @@ describe("<Blog/>", () => {
   })
 
   test("initially hide url and likes", () => {
-    const element = container.querySelector("#blog-details")
+    const element = renderResult.container.querySelector("#blog-details")
     expect(element).not.toBeVisible()
   })
 
@@ -33,7 +33,23 @@ describe("<Blog/>", () => {
     const button = screen.getByText("view")
     await user.click(button)
 
-    const element = container.querySelector("#blog-details")
+    const element = renderResult.container.querySelector("#blog-details")
     expect(element).toBeVisible()
+  })
+
+  test("clicking like button twice call event handler twice", async () => {
+    const mockHandler = jest.fn()
+    renderResult.rerender(
+      <Blog onClickLike={mockHandler} blog={blog} onClickDelete={() => {}} />
+    )
+    const user = userEvent.setup()
+    const viewButton = screen.getByText("view")
+    const likeButton = screen.getByText("like")
+
+    await user.click(viewButton)
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
