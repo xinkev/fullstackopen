@@ -21,7 +21,6 @@ const update = async (blog) => {
 }
 
 const remove = async (blog) => {
-  await axios.delete(baseUrl+`/${blog.id}`)
+  await axios.delete(baseUrl + `/${blog.id}`)
 }
-// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, setToken, create, update, remove }

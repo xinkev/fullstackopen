@@ -1,7 +1,8 @@
 import { useState } from "react"
 import Notification from "./Notification"
+import PropTypes from "prop-types"
 
-const LoginForm = ({ onLoginSubmit, notification}) => {
+const LoginForm = ({ onLoginSubmit, notification }) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
@@ -9,7 +10,7 @@ const LoginForm = ({ onLoginSubmit, notification}) => {
     e.preventDefault()
     onLoginSubmit({ username, password })
   }
-  
+
   return (
     <div>
       <h2>log in to application</h2>
@@ -39,4 +40,9 @@ const LoginForm = ({ onLoginSubmit, notification}) => {
   )
 }
 
+LoginForm.displayName = "LoginForm"
+LoginForm.PropTypes = {
+  onLoginSubmit: PropTypes.func.isRequired,
+  notification: PropTypes.object,
+}
 export default LoginForm

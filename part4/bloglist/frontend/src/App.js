@@ -47,7 +47,7 @@ const App = () => {
     }, 3000)
   }
 
-  const onLogoutClick = (e) => {
+  const onLogoutClick = () => {
     window.localStorage.removeItem(LOCAL_KEY_USER)
     setUser(null)
   }
@@ -85,7 +85,7 @@ const App = () => {
 
   const handleRemoveClick = async (blog) => {
     if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
-    
+
     try {
       await blogService.remove(blog)
       setBlogs(blogs.filter((b) => b.id !== blog.id))
