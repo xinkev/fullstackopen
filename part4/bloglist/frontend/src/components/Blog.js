@@ -20,7 +20,7 @@ const Blog = ({ blog, onClickLike, onClickDelete }) => {
           {isVisible ? "hide" : "view"}
         </button>
       </div>
-      <div style={{ display: isVisible ? "" : "none" }}>
+      <div id="blog-details" style={{ display: isVisible ? "" : "none" }}>
         <div>{blog.url}</div>
         <div>
           likes {blog.likes} <button onClick={onClickLike}>like</button>
@@ -35,7 +35,7 @@ const Blog = ({ blog, onClickLike, onClickDelete }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   onClickLike: PropTypes.func.isRequired,
-  onClickDelete: PropTypes.func.isRequired
+  onClickDelete: PropTypes.func.isRequired,
 }
 
 export default Blog

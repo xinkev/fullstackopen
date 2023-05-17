@@ -17,6 +17,7 @@ describe("<Blog/>", () => {
       <Blog blog={blog} onClickDelete={() => {}} onClickLike={() => {}} />
     ).container
   })
+
   test("renders title and author by default", () => {
     const element = screen.getByText(`${blog.title} ${blog.author}`)
     expect(element).toBeDefined()
@@ -25,5 +26,14 @@ describe("<Blog/>", () => {
   test("initially hide url and likes", () => {
     const element = container.querySelector("#blog-details")
     expect(element).not.toBeVisible()
+  })
+
+  test("url and likes are shown when details is clicked", async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText("view")
+    await user.click(button)
+
+    const element = container.querySelector("#blog-details")
+    expect(element).toBeVisible()
   })
 })
