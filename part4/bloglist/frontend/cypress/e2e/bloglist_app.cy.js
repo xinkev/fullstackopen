@@ -1,3 +1,4 @@
+/// <reference types="Cypress"/>
 describe("Bloglist app", () => {
   beforeEach(function () {
     cy.request("POST", "http://localhost:3001/api/testing/reset")
@@ -36,21 +37,44 @@ describe("Bloglist app", () => {
     })
 
     describe("when logged in", function () {
+      const blog = {
+        title: "A Test",
+        author: "Tester",
+        url: "http://test.com",
+      }
       beforeEach(function () {
         cy.login({ username: "tester", password: "sekret" })
       })
 
       it("a blog can be created", function () {
         cy.contains("new blog").click()
-        cy.get("#title-input").type("A Test")
-        cy.get("#author-input").type("Tester")
-        cy.get("#url-input").type("http://test.com")
+        cy.get("#title-input").type(blog.title)
+        cy.get("#author-input").type(blog.author)
+        cy.get("#url-input").type(blog.url)
         cy.get("#create-blog-button").click()
 
         cy.contains("a new blog A Test by Tester")
         cy.get(".success").should("have.css", "color", "rgb(0, 128, 0)")
         cy.get(".success").should("have.css", "border-style", "solid")
         cy.contains("A Test")
+      })
+
+      describe("when there's a blog", function () {
+        beforeEach(() => {
+          cy.createBlog(blog)
+          cy.get(":button").contains("view").as("viewButton").click()
+          cy.contains(blog.title).parent().as("blog")
+        })
+
+        it("can like a blog", function () {
+          cy.get("@blog").get(":button").contains("like").click()
+          cy.get("@blog").contains("likes 1")
+        })
+
+          const blogElement = cy.contains(blog.title).parent()
+          blogElement.get(":button").contains("like").click()
+          blogElement.contains("likes 1")
+        })
       })
     })
   })
