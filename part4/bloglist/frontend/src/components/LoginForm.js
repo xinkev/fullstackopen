@@ -12,7 +12,7 @@ const LoginForm = ({ onLoginSubmit, notification }) => {
   }
 
   return (
-    <div>
+    <div id="login-form">
       <h2>log in to application</h2>
       <Notification notification={notification} />
       <form onSubmit={handleSubmit}>
