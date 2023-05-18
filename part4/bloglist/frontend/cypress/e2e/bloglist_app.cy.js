@@ -7,7 +7,7 @@ describe("Bloglist app", () => {
       password: "sekret",
       name: "Tester One",
     }
-    cy.request("POST", "http://localhost:3001/api/users", user)
+    cy.createUser(user)
     cy.visit("http://localhost:3000")
   })
 
@@ -61,7 +61,7 @@ describe("Bloglist app", () => {
 
       describe("when there's at least one blog", function () {
         beforeEach(() => {
-          cy.createBlog({ blog })
+          cy.createBlog(blog)
           cy.reload()
           cy.get(":button").contains("view").as("viewButton").click()
           cy.contains(blog.title).parent().as("blog")
@@ -82,21 +82,25 @@ describe("Bloglist app", () => {
       })
       describe("when there's multiple blogs", function () {
         beforeEach(() => {
-          cy.createBlog({ blog })
+          cy.createBlog(blog)
           cy.createBlog({
-            blog: {
-              title: "Test 2",
-              author: "Tester One",
-              url: "http://test.com",
-            },
+            title: "Test 2",
+            author: "Tester One",
+            url: "http://test.com",
           })
+          // create another blog with a different user
+          cy.logout()
+          const user2 = {
+            username: "tester2",
+            password: "password",
+            name: "Tester Two",
+          }
+          cy.createUser(user2)
+          cy.login({ username: user2.username, password: user2.password })
           cy.createBlog({
-            blog: {
-              title: "Test 3",
-              author: "Tester Two",
-              url: "http://test.com",
-            },
-            withDifferentUser: true,
+            title: "Test 3",
+            author: "Tester Two",
+            url: "http://test.com",
           })
           cy.reload()
         })
@@ -107,13 +111,13 @@ describe("Bloglist app", () => {
           cy.contains("Test 3").parent().as("blog3")
 
           cy.get("@blog1").contains("view").click()
-          cy.get("@blog1").contains("remove")
+          cy.get("@blog1").contains("remove").should("not.exist")
 
           cy.get("@blog2").contains("view").click()
-          cy.get("@blog2").contains("remove")
+          cy.get("@blog2").contains("remove").should("not.exist")
 
           cy.get("@blog3").contains("view").click()
-          cy.get("@blog3").contains("remove").should("not.exist")
+          cy.get("@blog3").contains("remove")
         })
       })
     })

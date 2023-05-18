@@ -23,46 +23,34 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+const KEY_USER = "loggedin_user"
 
-Cypress.Commands.add("login", (credentials) => {
+const createUser = (newUser) => {
+  cy.request("POST", "http://localhost:3001/api/users", newUser)
+}
+
+const logout = () => {
+  localStorage.removeItem(KEY_USER)
+}
+
+const login = (credentials) => {
   cy.request("POST", `${Cypress.env("BACKEND")}/login`, credentials).then(
     (response) => {
-      localStorage.setItem("loggedin_user", JSON.stringify(response.body))
+      localStorage.setItem(KEY_USER, JSON.stringify(response.body))
       cy.visit("http://localhost:3000")
     }
   )
-})
+}
 
-Cypress.Commands.add(
-  "createBlog",
-  ({ blog, withDifferentUser: withDifferentUser }) => {
-    if (withDifferentUser) {
-      cy.request("POST", `${Cypress.env("BACKEND")}/users`, {
-        username: "tester2",
-        password: "password",
-        name: "Tester Two",
-      }).then(() => {
-        return cy.request("POST", `${Cypress.env("BACKEND")}/login`, {
-          username: "tester2",
-          password: "password",
-        })
-      }).then(response => {
-        cy.request({
-          method: "POST",
-          url: `${Cypress.env("BACKEND")}/blogs`,
-          body: blog,
-          headers: { Authorization: "Bearer " + response.body.token },
-        })
-      })
-    } else {
-      const userString = localStorage.getItem("loggedin_user")
-      const user = JSON.parse(userString)
-      cy.request({
-        method: "POST",
-        url: `${Cypress.env("BACKEND")}/blogs`,
-        body: blog,
-        headers: { Authorization: "Bearer " + user.token },
-      })
-    }
-  }
-)
+const createBlog = (blog) => {
+  const userString = localStorage.getItem("loggedin_user")
+  const user = JSON.parse(userString)
+  cy.request({
+    method: "POST",
+    url: `${Cypress.env("BACKEND")}/blogs`,
+    body: blog,
+    headers: { Authorization: "Bearer " + user.token },
+  })
+}
+
+Cypress.Commands.addAll({ createUser, login, logout, createBlog })
