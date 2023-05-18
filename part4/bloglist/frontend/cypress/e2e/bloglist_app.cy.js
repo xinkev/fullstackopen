@@ -31,6 +31,27 @@ describe("Bloglist app", () => {
       cy.get("#login-button").click()
 
       cy.contains("wrong username or password")
+      cy.get(".error").should("have.css", "color", "rgb(255, 0, 0)")
+      cy.get(".error").should("have.css", "border-style", "solid")
+    })
+
+    describe("when logged in", function () {
+      beforeEach(function () {
+        cy.login({ username: "tester", password: "sekret" })
+      })
+
+      it("a blog can be created", function () {
+        cy.contains("new blog").click()
+        cy.get("#title-input").type("A Test")
+        cy.get("#author-input").type("Tester")
+        cy.get("#url-input").type("http://test.com")
+        cy.get("#create-blog-button").click()
+
+        cy.contains("a new blog A Test by Tester")
+        cy.get(".success").should("have.css", "color", "rgb(0, 128, 0)")
+        cy.get(".success").should("have.css", "border-style", "solid")
+        cy.contains("A Test")
+      })
     })
   })
 })

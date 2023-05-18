@@ -57,7 +57,9 @@ const BlogForm = forwardRef(({ onCreateBlog }, refs) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type="submit">create</button>
+        <button type="submit" id="create-blog-button">
+          create
+        </button>
       </form>
     </div>
   )
