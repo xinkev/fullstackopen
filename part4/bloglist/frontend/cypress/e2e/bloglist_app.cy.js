@@ -59,9 +59,10 @@ describe("Bloglist app", () => {
         cy.contains("A Test")
       })
 
-      describe("when there's a blog", function () {
+      describe("when there's at least one blog", function () {
         beforeEach(() => {
-          cy.createBlog(blog)
+          cy.createBlog({ blog })
+          cy.reload()
           cy.get(":button").contains("view").as("viewButton").click()
           cy.contains(blog.title).parent().as("blog")
         })
@@ -77,6 +78,42 @@ describe("Bloglist app", () => {
             return true
           })
           cy.should("not.have.text", blog.title)
+        })
+      })
+      describe("when there's multiple blogs", function () {
+        beforeEach(() => {
+          cy.createBlog({ blog })
+          cy.createBlog({
+            blog: {
+              title: "Test 2",
+              author: "Tester One",
+              url: "http://test.com",
+            },
+          })
+          cy.createBlog({
+            blog: {
+              title: "Test 3",
+              author: "Tester Two",
+              url: "http://test.com",
+            },
+            withDifferentUser: true,
+          })
+          cy.reload()
+        })
+
+        it("remove button should only be visible to the creator", function () {
+          cy.contains(blog.title).parent().as("blog1")
+          cy.contains("Test 2").parent().as("blog2")
+          cy.contains("Test 3").parent().as("blog3")
+
+          cy.get("@blog1").contains("view").click()
+          cy.get("@blog1").contains("remove")
+
+          cy.get("@blog2").contains("view").click()
+          cy.get("@blog2").contains("remove")
+
+          cy.get("@blog3").contains("view").click()
+          cy.get("@blog3").contains("remove").should("not.exist")
         })
       })
     })

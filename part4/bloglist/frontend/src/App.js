@@ -117,6 +117,7 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
+                removable={user.id === blog.user.id}
                 onClickLike={() => handleLikeClick(blog)}
                 onClickDelete={() => handleRemoveClick(blog)}
               />

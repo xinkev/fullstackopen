@@ -43,7 +43,7 @@ const LoginForm = ({ onLoginSubmit, notification }) => {
 }
 
 LoginForm.displayName = "LoginForm"
-LoginForm.PropTypes = {
+LoginForm.propTypes = {
   onLoginSubmit: PropTypes.func.isRequired,
   notification: PropTypes.object,
 }

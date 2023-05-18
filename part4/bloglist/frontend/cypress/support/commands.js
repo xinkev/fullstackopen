@@ -26,22 +26,43 @@
 
 Cypress.Commands.add("login", (credentials) => {
   cy.request("POST", `${Cypress.env("BACKEND")}/login`, credentials).then(
-    (request) => {
-      localStorage.setItem("loggedin_user", JSON.stringify(request.body))
+    (response) => {
+      localStorage.setItem("loggedin_user", JSON.stringify(response.body))
       cy.visit("http://localhost:3000")
     }
   )
 })
 
-Cypress.Commands.add("createBlog", (blog) => {
-  const userString = localStorage.getItem("loggedin_user")
-  const user = JSON.parse(userString)
-  cy.request({
-    method: "POST",
-    url: `${Cypress.env("BACKEND")}/blogs`,
-    body: blog,
-    headers: { Authorization: "Bearer " + user.token },
-  }).then(() => {
-    cy.reload()
-  })
-})
+Cypress.Commands.add(
+  "createBlog",
+  ({ blog, withDifferentUser: withDifferentUser }) => {
+    if (withDifferentUser) {
+      cy.request("POST", `${Cypress.env("BACKEND")}/users`, {
+        username: "tester2",
+        password: "password",
+        name: "Tester Two",
+      }).then(() => {
+        return cy.request("POST", `${Cypress.env("BACKEND")}/login`, {
+          username: "tester2",
+          password: "password",
+        })
+      }).then(response => {
+        cy.request({
+          method: "POST",
+          url: `${Cypress.env("BACKEND")}/blogs`,
+          body: blog,
+          headers: { Authorization: "Bearer " + response.body.token },
+        })
+      })
+    } else {
+      const userString = localStorage.getItem("loggedin_user")
+      const user = JSON.parse(userString)
+      cy.request({
+        method: "POST",
+        url: `${Cypress.env("BACKEND")}/blogs`,
+        body: blog,
+        headers: { Authorization: "Bearer " + user.token },
+      })
+    }
+  }
+)

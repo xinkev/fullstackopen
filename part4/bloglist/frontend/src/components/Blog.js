@@ -1,7 +1,7 @@
 import { useState } from "react"
 import PropTypes from "prop-types"
 
-const Blog = ({ blog, onClickLike, onClickDelete }) => {
+const Blog = ({ blog, removable, onClickLike, onClickDelete }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -26,7 +26,7 @@ const Blog = ({ blog, onClickLike, onClickDelete }) => {
           likes {blog.likes} <button onClick={onClickLike}>like</button>
         </div>
         <div>{blog.user && blog.user.name}</div>
-        <button onClick={onClickDelete}>remove</button>
+        {removable && <button onClick={onClickDelete}>remove</button>}
       </div>
     </div>
   )
@@ -34,6 +34,7 @@ const Blog = ({ blog, onClickLike, onClickDelete }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
+  removable: PropTypes.bool,
   onClickLike: PropTypes.func.isRequired,
   onClickDelete: PropTypes.func.isRequired,
 }
