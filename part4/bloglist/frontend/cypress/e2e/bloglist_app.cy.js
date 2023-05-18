@@ -81,13 +81,29 @@ describe("Bloglist app", () => {
         })
       })
       describe("when there's multiple blogs", function () {
-        beforeEach(() => {
-          cy.createBlog(blog)
-          cy.createBlog({
+        const blogs = [
+          {
+            title: "Test 1",
+            author: "Tester One",
+            url: "http://test.com",
+            likes: 2,
+          },
+          {
             title: "Test 2",
             author: "Tester One",
             url: "http://test.com",
-          })
+            likes: 1,
+          },
+          {
+            title: "Test 3",
+            author: "Tester One",
+            url: "http://test.com",
+            likes: 3,
+          },
+        ]
+        beforeEach(() => {
+          cy.createBlog(blogs[0])
+          cy.createBlog(blogs[1])
           // create another blog with a different user
           cy.logout()
           const user2 = {
@@ -97,18 +113,14 @@ describe("Bloglist app", () => {
           }
           cy.createUser(user2)
           cy.login({ username: user2.username, password: user2.password })
-          cy.createBlog({
-            title: "Test 3",
-            author: "Tester Two",
-            url: "http://test.com",
-          })
+          cy.createBlog(blogs[2])
           cy.reload()
         })
 
         it("remove button should only be visible to the creator", function () {
-          cy.contains(blog.title).parent().as("blog1")
-          cy.contains("Test 2").parent().as("blog2")
-          cy.contains("Test 3").parent().as("blog3")
+          cy.contains(blogs[0].title).parent().as("blog1")
+          cy.contains(blogs[1].title).parent().as("blog2")
+          cy.contains(blogs[2].title).parent().as("blog3")
 
           cy.get("@blog1").contains("view").click()
           cy.get("@blog1").contains("remove").should("not.exist")
@@ -118,6 +130,12 @@ describe("Bloglist app", () => {
 
           cy.get("@blog3").contains("view").click()
           cy.get("@blog3").contains("remove")
+        })
+
+        it("blogs are ordered according to likes", function () {
+          cy.get(".blog").eq(0).should("contain", blogs[2].title)
+          cy.get(".blog").eq(1).should("contain", blogs[0].title)
+          cy.get(".blog").eq(2).should("contain", blogs[1].title)
         })
       })
     })

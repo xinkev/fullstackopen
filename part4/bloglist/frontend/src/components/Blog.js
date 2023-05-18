@@ -13,7 +13,7 @@ const Blog = ({ blog, removable, onClickLike, onClickDelete }) => {
   const [isVisible, setIsVisible] = useState(false)
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <div>
         {blog.title} {blog.author}
         <button onClick={() => setIsVisible(!isVisible)}>
