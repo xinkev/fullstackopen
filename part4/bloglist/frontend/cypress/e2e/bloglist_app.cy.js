@@ -71,9 +71,12 @@ describe("Bloglist app", () => {
           cy.get("@blog").contains("likes 1")
         })
 
-          const blogElement = cy.contains(blog.title).parent()
-          blogElement.get(":button").contains("like").click()
-          blogElement.contains("likes 1")
+        it("can be delete by the creator", function () {
+          cy.contains("remove").click()
+          cy.on("window:confirm", function () {
+            return true
+          })
+          cy.should("not.have.text", blog.title)
         })
       })
     })
