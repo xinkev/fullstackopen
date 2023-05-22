@@ -45,7 +45,7 @@ export const voteAnecdotes = (id) => {
   }
 }
 
-export const createAnecedote = (anecdote) => {
+export const createAnecdote = (anecdote) => {
   return {
     type: "CREATE_ANECDOTE",
     payload: { anecdote },
