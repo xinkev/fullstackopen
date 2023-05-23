@@ -4,7 +4,10 @@ import { useQuery } from "react-query"
 import { getAnecdotes } from "./requests"
 
 const App = () => {
-  const result = useQuery("anecdotes", () => getAnecdotes(), { retry: 1 })
+  const result = useQuery("anecdotes", () => getAnecdotes(), {
+    retry: 1,
+    refetchOnWindowFocus: false,
+  })
 
   const handleVote = (anecdote) => {
     console.log("vote")
