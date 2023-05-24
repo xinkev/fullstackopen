@@ -79,9 +79,9 @@ const Anecdote = ({ anecdote }) =>
   )
 
 const CreateNew = (props) => {
-  const content = useField("text")
-  const author = useField("text")
-  const info = useField("")
+  const [content, resetContent] = useField("text")
+  const [author, resetAuthor] = useField("text")
+  const [info, resetInfo] = useField("")
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -95,9 +95,9 @@ const CreateNew = (props) => {
 
   const handelReset = (e) => {
     e.preventDefault()
-    content.reset()
-    author.reset()
-    info.reset()
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   return (
