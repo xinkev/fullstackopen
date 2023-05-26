@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react"
 import PropTypes from "prop-types"
+import { Link } from "react-router-dom"
 
 const Blog = ({ blog, removable, onClickLike, onClickDelete }) => {
   const blogStyle = {
@@ -15,18 +17,9 @@ const Blog = ({ blog, removable, onClickLike, onClickDelete }) => {
   return (
     <div style={blogStyle} className="blog">
       <div>
-        {blog.title} {blog.author}
-        <button onClick={() => setIsVisible(!isVisible)}>
-          {isVisible ? "hide" : "view"}
-        </button>
-      </div>
-      <div id="blog-details" style={{ display: isVisible ? "" : "none" }}>
-        <div>{blog.url}</div>
-        <div>
-          likes {blog.likes} <button onClick={onClickLike}>like</button>
-        </div>
-        <div>{blog.user && blog.user.name}</div>
-        {removable && <button onClick={onClickDelete}>remove</button>}
+        <Link to={"/blogs/" + blog.id}>
+          {blog.title} {blog.author}
+        </Link>
       </div>
     </div>
   )

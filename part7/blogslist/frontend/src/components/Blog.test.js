@@ -23,11 +23,6 @@ describe("<Blog/>", () => {
     expect(element).toBeDefined()
   })
 
-  test("initially hide url and likes", () => {
-    const element = renderResult.container.querySelector("#blog-details")
-    expect(element).not.toBeVisible()
-  })
-
   test("url and likes are shown when details is clicked", async () => {
     const user = userEvent.setup()
     const button = screen.getByText("view")
