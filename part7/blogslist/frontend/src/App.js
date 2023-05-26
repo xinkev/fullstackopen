@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react"
 import Blog from "./components/Blog"
 import Notification from "./components/Notification"
@@ -8,12 +9,15 @@ import Toggleable from "./components/Toggleable"
 import BlogForm from "./components/BlogForm"
 import { useDispatch, useSelector } from "react-redux"
 import { setNotification } from "./reducers/notificationReducer"
+import { createBlog, initializeBlogs } from "./reducers/blogReducer"
 
 const App = () => {
   const LOCAL_KEY_USER = "loggedin_user"
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const notification = useSelector((state) => state.notification)
+  const blogs = useSelector((state) =>
+    [...state.blogs].sort((a, b) => a.likes < b.likes)
+  )
 
   const blogFormRef = useRef()
   const toggleRef = useRef()
@@ -22,7 +26,7 @@ const App = () => {
   useEffect(() => {
     if (user) {
       blogService.setToken(user.token)
-      blogService.getAll().then((blogs) => setBlogs(blogs))
+      dispatch(initializeBlogs())
     }
   }, [user])
 
@@ -55,10 +59,9 @@ const App = () => {
 
   const handleBlogCreation = async (newBlog) => {
     try {
-      const createdBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(createdBlog))
+      dispatch(createBlog(newBlog))
       showNotification({
-        message: `a new blog ${createdBlog.title} by ${createdBlog.author}`,
+        message: `a new blog ${newBlog.title} by ${newBlog.author}`,
         type: "success",
       })
       blogFormRef.current.reset()
@@ -72,30 +75,29 @@ const App = () => {
   }
 
   const handleLikeClick = async (blog) => {
-    const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
-    try {
-      const updatedBlog = await blogService.update(newBlog)
-      setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)))
-    } catch (exception) {
-      showNotification({
-        message: "failed to remove the blog",
-        type: "error",
-      })
-    }
+    // const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
+    // try {
+    //   const updatedBlog = await blogService.update(newBlog)
+    //   setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)))
+    // } catch (exception) {
+    //   showNotification({
+    //     message: "failed to remove the blog",
+    //     type: "error",
+    //   })
+    // }
   }
 
   const handleRemoveClick = async (blog) => {
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
-
-    try {
-      await blogService.remove(blog)
-      setBlogs(blogs.filter((b) => b.id !== blog.id))
-    } catch (exception) {
-      showNotification({
-        message: "failed to remove the blog",
-        type: "error",
-      })
-    }
+    // if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
+    // try {
+    //   await blogService.remove(blog)
+    //   setBlogs(blogs.filter((b) => b.id !== blog.id))
+    // } catch (exception) {
+    //   showNotification({
+    //     message: "failed to remove the blog",
+    //     type: "error",
+    //   })
+    // }
   }
 
   return (
@@ -110,11 +112,13 @@ const App = () => {
           </p>
           <br />
           <Toggleable buttonLabel="new blog" ref={toggleRef}>
-            <BlogForm onCreateBlog={handleBlogCreation} ref={blogFormRef} />
+            <BlogForm
+              onCreateBlog={handleBlogCreation}
+              ref={blogFormRef}
+            />
           </Toggleable>
-          {blogs
-            .sort((a, b) => a.likes < b.likes)
-            .map((blog) => (
+          {blogs &&
+            blogs.map((blog) => (
               <Blog
                 key={blog.id}
                 blog={blog}
