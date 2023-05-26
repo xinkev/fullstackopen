@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux"
 import { useMatch } from "react-router-dom"
-import { updateBlog } from "../reducers/blogReducer"
+import { saveComment, updateBlog } from "../reducers/blogReducer"
 import { setNotification } from "../reducers/notificationReducer"
 
 const Blog = () => {
@@ -26,6 +26,12 @@ const Blog = () => {
     }
   }
 
+  const handleSubmt = (e) => {
+    e.preventDefault()
+    dispatch(saveComment(blog.id, e.target.comment.value))
+    e.target.comment.value = ""
+  }
+
   return (
     <div>
       <h2>{blog.title}</h2>
@@ -35,6 +41,17 @@ const Blog = () => {
       <button onClick={handleLikeClick}>like</button>
       <br />
       added by {blog.author}
+      <br />
+      <h3>comments</h3>
+      <form onSubmit={handleSubmt}>
+        <input type="text" name="comment" />
+        <button type="submit">add comment</button>
+      </form>
+      <ul>
+        {blog.comments.map((comment, index) => (
+          <li key={index}>{comment}</li>
+        ))}
+      </ul>
     </div>
   )
 }
