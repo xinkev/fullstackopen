@@ -4,7 +4,7 @@ import LoginForm from "./components/LoginForm"
 import { useDispatch, useSelector } from "react-redux"
 import { setNotification } from "./reducers/notificationReducer"
 import { login, logout } from "./reducers/userReducer"
-import { Outlet } from "react-router-dom"
+import { Link, Outlet } from "react-router-dom"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -33,16 +33,26 @@ const App = () => {
 
   return (
     <div>
-      {user && (
-        <>
-          <h2>blogs</h2>
-          <Notification notification={notification} />
-          <p>
+      <div
+        style={{
+          display: "flex",
+          gap: 4,
+          width: "100%",
+          background: "#C9C9C9",
+          padding: 4,
+        }}
+      >
+        <Link to="/">Blogs</Link>
+        <Link to="/users">Users</Link>
+        {user && (
+          <>
             {user.name} logged in{" "}
             <button onClick={onLogoutClick}>logout</button>
-          </p>
-        </>
-      )}
+          </>
+        )}
+      </div>
+      <h2>blog app</h2>
+      {user && <Notification notification={notification} />}
       {!user && (
         <LoginForm onLoginSubmit={onLoginSubmit} notification={notification} />
       )}
