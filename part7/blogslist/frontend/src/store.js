@@ -6,6 +6,7 @@ import {
 import notificationReducer from "./reducers/notificationReducer"
 import blogReducer from "./reducers/blogReducer"
 import userReducer, { clearUser, setUser } from "./reducers/userReducer"
+import usersReducer from "./reducers/usersReducer"
 
 const KEY = "loggedin_user"
 const loadUser = () => {
@@ -30,6 +31,7 @@ export const store = configureStore({
     notification: notificationReducer,
     blogs: blogReducer,
     user: userReducer,
+    users: usersReducer,
   },
   preloadedState: { user: loadUser() },
   middleware: (defaultMiddleware) => [
