@@ -15,10 +15,10 @@ import {
   initializeBlogs,
   updateBlog,
 } from "./reducers/blogReducer"
+import { login, logout } from "./reducers/userReducer"
 
 const App = () => {
-  const LOCAL_KEY_USER = "loggedin_user"
-  const [user, setUser] = useState(null)
+  const user = useSelector((state) => state.user)
   const notification = useSelector((state) => state.notification)
   const blogs = useSelector((state) =>
     [...state.blogs].sort((a, b) => a.likes < b.likes)
@@ -35,16 +35,9 @@ const App = () => {
     }
   }, [user])
 
-  useEffect(() => {
-    const userString = window.localStorage.getItem(LOCAL_KEY_USER)
-    setUser(JSON.parse(userString))
-  }, [])
-
   const onLoginSubmit = async (credentials) => {
     try {
-      const user = await loginService.login(credentials)
-      window.localStorage.setItem(LOCAL_KEY_USER, JSON.stringify(user))
-      setUser(user)
+      dispatch(login(credentials))
     } catch (exception) {
       showNotification({
         message: "wrong username or password",
@@ -58,8 +51,7 @@ const App = () => {
   }
 
   const onLogoutClick = () => {
-    window.localStorage.removeItem(LOCAL_KEY_USER)
-    setUser(null)
+    dispatch(logout())
   }
 
   const handleBlogCreation = async (newBlog) => {
