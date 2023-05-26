@@ -6,14 +6,18 @@ import blogService from "./services/blogs"
 import loginService from "./services/login"
 import Toggleable from "./components/Toggleable"
 import BlogForm from "./components/BlogForm"
+import { useDispatch, useSelector } from "react-redux"
+import { setNotification } from "./reducers/notificationReducer"
 
 const App = () => {
   const LOCAL_KEY_USER = "loggedin_user"
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
+  const notification = useSelector((state) => state.notification)
+
   const blogFormRef = useRef()
   const toggleRef = useRef()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (user) {
@@ -41,10 +45,7 @@ const App = () => {
   }
 
   const showNotification = (notification) => {
-    setNotification(notification)
-    setTimeout(() => {
-      setNotification(null)
-    }, 3000)
+    dispatch(setNotification(notification))
   }
 
   const onLogoutClick = () => {
