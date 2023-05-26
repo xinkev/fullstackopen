@@ -1,22 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useRef } from "react"
-import Blog from "./components/Blog"
 import Notification from "./components/Notification"
 import LoginForm from "./components/LoginForm"
-import blogService from "./services/blogs"
-import loginService from "./services/login"
 import { useDispatch, useSelector } from "react-redux"
 import { setNotification } from "./reducers/notificationReducer"
-
 import { login, logout } from "./reducers/userReducer"
-import Users from "./pages/Users"
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
-import Blogs from "./pages/Blogs"
-
-const router = createBrowserRouter([
-  { path: "/", element: <Blogs /> },
-  { path: "/users", element: <Users /> },
-])
+import { Outlet } from "react-router-dom"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -59,7 +47,7 @@ const App = () => {
         <LoginForm onLoginSubmit={onLoginSubmit} notification={notification} />
       )}
 
-      {user && <RouterProvider router={router} />}
+      {user && <Outlet />}
     </div>
   )
 }
