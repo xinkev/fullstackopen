@@ -9,7 +9,12 @@ import Toggleable from "./components/Toggleable"
 import BlogForm from "./components/BlogForm"
 import { useDispatch, useSelector } from "react-redux"
 import { setNotification } from "./reducers/notificationReducer"
-import { createBlog, initializeBlogs } from "./reducers/blogReducer"
+import {
+  createBlog,
+  deleteBlog,
+  initializeBlogs,
+  updateBlog,
+} from "./reducers/blogReducer"
 
 const App = () => {
   const LOCAL_KEY_USER = "loggedin_user"
@@ -75,29 +80,27 @@ const App = () => {
   }
 
   const handleLikeClick = async (blog) => {
-    // const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
-    // try {
-    //   const updatedBlog = await blogService.update(newBlog)
-    //   setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)))
-    // } catch (exception) {
-    //   showNotification({
-    //     message: "failed to remove the blog",
-    //     type: "error",
-    //   })
-    // }
+    const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
+    try {
+      dispatch(updateBlog(newBlog))
+    } catch (exception) {
+      showNotification({
+        message: "failed to remove the blog",
+        type: "error",
+      })
+    }
   }
 
   const handleRemoveClick = async (blog) => {
-    // if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
-    // try {
-    //   await blogService.remove(blog)
-    //   setBlogs(blogs.filter((b) => b.id !== blog.id))
-    // } catch (exception) {
-    //   showNotification({
-    //     message: "failed to remove the blog",
-    //     type: "error",
-    //   })
-    // }
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
+    try {
+      dispatch(deleteBlog(blog))
+    } catch (exception) {
+      showNotification({
+        message: "failed to remove the blog",
+        type: "error",
+      })
+    }
   }
 
   return (
@@ -112,10 +115,7 @@ const App = () => {
           </p>
           <br />
           <Toggleable buttonLabel="new blog" ref={toggleRef}>
-            <BlogForm
-              onCreateBlog={handleBlogCreation}
-              ref={blogFormRef}
-            />
+            <BlogForm onCreateBlog={handleBlogCreation} ref={blogFormRef} />
           </Toggleable>
           {blogs &&
             blogs.map((blog) => (
