@@ -1,5 +1,6 @@
-import { forwardRef, useImperativeHandle, useState } from "react"
+import { Box, Button, Stack, TextField } from "@mui/material"
 import PropTypes from "prop-types"
+import { forwardRef, useImperativeHandle, useState } from "react"
 
 const BlogForm = forwardRef(({ onCreateBlog }, refs) => {
   const [title, setTitle] = useState("")
@@ -24,44 +25,42 @@ const BlogForm = forwardRef(({ onCreateBlog }, refs) => {
   })
 
   return (
-    <div>
-      create new
-      <form onSubmit={handleSubmit}>
-        <div>
-          title:
-          <input
-            value={title}
-            type="text"
-            name="Title"
-            onChange={({ target }) => setTitle(target.value)}
-            id="title-input"
-          />
-        </div>
-        <div>
-          author:
-          <input
-            value={author}
-            id="author-input"
-            type="text"
-            name="Author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url:
-          <input
-            type="text"
-            id="url-input"
-            name="url"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button type="submit" id="create-blog-button">
-          create
-        </button>
-      </form>
-    </div>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      Create new
+      <Stack component="form" onSubmit={handleSubmit} maxWidth="sm" spacing={2}>
+        <TextField
+          label="Title"
+          value={title}
+          onChange={({ target }) => setTitle(target.value)}
+          id="title-input"
+        />
+
+        <TextField
+          value={author}
+          id="author-input"
+          type="text"
+          name="Author"
+          label="Author"
+          onChange={({ target }) => setAuthor(target.value)}
+        />
+        <TextField
+          type="text"
+          id="url-input"
+          label="Url"
+          name="url"
+          value={url}
+          onChange={({ target }) => setUrl(target.value)}
+        />
+        <Button
+          type="submit"
+          id="create-blog-button"
+          variant="contained"
+          sx={{ width: "min-content", mt: 1, mb: 1 }}
+        >
+          Create
+        </Button>
+      </Stack>
+    </Box>
   )
 })
 

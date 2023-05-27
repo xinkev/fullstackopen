@@ -1,6 +1,7 @@
+import { Button, Container, Stack, TextField } from "@mui/material"
+import PropTypes from "prop-types"
 import { useState } from "react"
 import Notification from "./Notification"
-import PropTypes from "prop-types"
 
 const LoginForm = ({ onLoginSubmit, notification }) => {
   const [username, setUsername] = useState("")
@@ -12,33 +13,31 @@ const LoginForm = ({ onLoginSubmit, notification }) => {
   }
 
   return (
-    <div id="login-form">
-      <h2>log in to application</h2>
+    <Container id="login-form" maxWidth="xs">
+      <h2>Log in to application</h2>
       <Notification notification={notification} />
-      <form onSubmit={handleSubmit}>
-        <div>
-          username
-          <input
-            value={username}
-            name="Username"
-            type="text"
-            id="username-input"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-            type="password"
-            id="password-input"
-          />
-        </div>
-        <button type="submit" id="login-button">login</button>
-      </form>
-    </div>
+      <Stack spacing={2} component="form" onSubmit={handleSubmit}>
+        <TextField
+          value={username}
+          name="Username"
+          type="text"
+          label="Username"
+          id="username-input"
+          onChange={({ target }) => setUsername(target.value)}
+        />
+        <TextField
+          value={password}
+          name="Password"
+          label="Password"
+          onChange={({ target }) => setPassword(target.value)}
+          type="password"
+          id="password-input"
+        />
+        <Button type="submit" id="login-button" variant="contained">
+          Login
+        </Button>
+      </Stack>
+    </Container>
   )
 }
 

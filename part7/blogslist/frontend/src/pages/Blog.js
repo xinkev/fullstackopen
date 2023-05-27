@@ -1,3 +1,12 @@
+import LikeButton from "@mui/icons-material/ThumbUp"
+import {
+  Button,
+  Container,
+  IconButton,
+  Link,
+  Stack,
+  TextField,
+} from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 import { useMatch } from "react-router-dom"
 import { saveComment, updateBlog } from "../reducers/blogReducer"
@@ -33,26 +42,29 @@ const Blog = () => {
   }
 
   return (
-    <div>
-      <h2>{blog.title}</h2>
-      <a href={blog.url}>{blog.url}</a>
-      <br />
-      likes {blog.likes}
-      <button onClick={handleLikeClick}>like</button>
-      <br />
-      added by {blog.author}
-      <br />
-      <h3>comments</h3>
-      <form onSubmit={handleSubmt}>
-        <input type="text" name="comment" />
-        <button type="submit">add comment</button>
-      </form>
-      <ul>
-        {blog.comments.map((comment, index) => (
-          <li key={index}>{comment}</li>
-        ))}
-      </ul>
-    </div>
+    <Container>
+      <Stack>
+        <h2>{blog.title}</h2>
+        <Link href={blog.url}>{blog.url}</Link>
+        likes {blog.likes}
+        <IconButton onClick={handleLikeClick} aria-label="like" size="small">
+          <LikeButton />
+        </IconButton>
+        added by {blog.author}
+        <h3>comments</h3>
+        <form onSubmit={handleSubmt}>
+          <TextField type="text" name="comment" />
+          <Button variant="contained" type="submit">
+            Add comment
+          </Button>
+        </form>
+        <ul>
+          {blog.comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
+        </ul>
+      </Stack>
+    </Container>
   )
 }
 

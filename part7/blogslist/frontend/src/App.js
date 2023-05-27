@@ -1,10 +1,20 @@
 /* eslint-disable no-unused-vars */
-import Notification from "./components/Notification"
-import LoginForm from "./components/LoginForm"
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  Toolbar,
+  Typography,
+} from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
+import { Link, Outlet } from "react-router-dom"
+import AvatarMenu from "./components/AvatarMenu"
+import LoginForm from "./components/LoginForm"
+import Notification from "./components/Notification"
 import { setNotification } from "./reducers/notificationReducer"
 import { login, logout } from "./reducers/userReducer"
-import { Link, Outlet } from "react-router-dom"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -27,38 +37,48 @@ const App = () => {
     dispatch(setNotification(notification))
   }
 
-  const onLogoutClick = () => {
+  const handleLogout = () => {
     dispatch(logout())
   }
 
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          gap: 4,
-          width: "100%",
-          background: "#C9C9C9",
-          padding: 4,
-        }}
-      >
-        <Link to="/">Blogs</Link>
-        <Link to="/users">Users</Link>
-        {user && (
-          <>
-            {user.name} logged in{" "}
-            <button onClick={onLogoutClick}>logout</button>
-          </>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline enableColorScheme />
+      <AppBar component="nav">
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: "inline-block", sm: "block" } }}
+          >
+            Blog App
+          </Typography>
+          {user && (
+            <Box sx={{ display: "block" }}>
+              <Button to="/" component={Link} sx={{ color: "#fff" }}>
+                Blogs
+              </Button>
+              <Button to="/users" component={Link} sx={{ color: "#fff" }}>
+                Users
+              </Button>
+              <AvatarMenu username={user.name} onClickLogout={handleLogout} />
+            </Box>
+          )}
+        </Toolbar>
+      </AppBar>
+      <Container component="main">
+        <Toolbar />
+        {user && <Notification notification={notification} />}
+        {!user && (
+          <LoginForm
+            onLoginSubmit={onLoginSubmit}
+            notification={notification}
+          />
         )}
-      </div>
-      <h2>blog app</h2>
-      {user && <Notification notification={notification} />}
-      {!user && (
-        <LoginForm onLoginSubmit={onLoginSubmit} notification={notification} />
-      )}
 
-      {user && <Outlet />}
-    </div>
+        {user && <Outlet />}
+      </Container>
+    </Box>
   )
 }
 

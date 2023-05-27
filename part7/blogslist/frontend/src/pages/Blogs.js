@@ -1,15 +1,18 @@
+import {
+  Box,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+} from "@mui/material"
+import { useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 import BlogForm from "../components/BlogForm"
 import Toggleable from "../components/Toggleable"
-import { useEffect, useRef } from "react"
-import Blog from "../components/Blog"
+import { createBlog, initializeBlogs } from "../reducers/blogReducer"
 import { setNotification } from "../reducers/notificationReducer"
-import {
-  createBlog,
-  deleteBlog,
-  initializeBlogs,
-  updateBlog,
-} from "../reducers/blogReducer"
 import blogService from "../services/blogs"
 
 const Blogs = () => {
@@ -50,46 +53,24 @@ const Blogs = () => {
     }
   }
 
-  const handleLikeClick = async (blog) => {
-    const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
-    try {
-      dispatch(updateBlog(newBlog))
-    } catch (exception) {
-      showNotification({
-        message: "failed to remove the blog",
-        type: "error",
-      })
-    }
-  }
-
-  const handleRemoveClick = async (blog) => {
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
-    try {
-      dispatch(deleteBlog(blog))
-    } catch (exception) {
-      showNotification({
-        message: "failed to remove the blog",
-        type: "error",
-      })
-    }
-  }
-
   return (
-    <div>
-      <Toggleable buttonLabel="new blog" ref={toggleRef}>
-        <BlogForm onCreateBlog={handleBlogCreation} ref={blogFormRef} />
-      </Toggleable>
-      {blogs &&
-        blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            removable={user.id === blog.user.id}
-            onClickLike={() => handleLikeClick(blog)}
-            onClickDelete={() => handleRemoveClick(blog)}
-          />
-        ))}
-    </div>
+    <Box p={3}>
+      <Box pt={3} pb={3}>
+        <Toggleable buttonLabel="new blog" ref={toggleRef}>
+          <BlogForm onCreateBlog={handleBlogCreation} ref={blogFormRef} />
+        </Toggleable>
+      </Box>
+      <Paper variant="outlined">
+        <List>
+          {blogs.map((blog) => (
+            <ListItem key={blog.id} component={Link} to={`/blogs/${blog.id}`}>
+              <ListItemText primary={blog.title} secondary={blog.author} />
+              <Divider />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
+    </Box>
   )
 }
 
