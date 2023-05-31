@@ -168,15 +168,15 @@ const resolvers = {
       return book
     },
     editAuthor: (root, args) => {
-      let author = null
-      authors = authors.map((a) => {
-        if (a.name === args.name) {
-          author = { ...a, born: args.setBornTo }
-          return author
-        } else {
-          return a
-        }
-      })
+        let author = null
+        authors = authors.map((a) => {
+          if (a.name === args.name) {
+            author = { ...a, born: args.setBornTo }
+            return author
+          } else {
+            return a
+          }
+        })
       return author
     },
   },
